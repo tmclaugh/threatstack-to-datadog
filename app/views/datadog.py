@@ -39,15 +39,18 @@ def put_alert():
     Archive Threat Stack alerts to datadog.
     '''
     webhook_data = request.get_json()
+    datadog_response_list = []
     for alert in webhook_data.get('alerts'):
-        alert_full = threatstack_model.get_alert_by_id(alert.get('id'))
+        ts = threatstack_model.ThreatStackModel()
+        alert_full = ts.get_alert_by_id(alert.get('id'))
 
-        datadog_model.put_webhook_data(alert)
-        datadog_model.put_alert_data(alert_full)
+        dd = datadog_model.DataDogModel()
+        datadog_response = dd.put_alert_event(alert_full)
+        datadog_response_list.append(datadog_response)
 
     status_code = 200
     success = True
-    response = {'success': success}
+    response = {'success': success, 'datadog': datadog_response_list}
 
     return jsonify(response), status_code
 
