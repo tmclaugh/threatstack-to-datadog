@@ -53,7 +53,6 @@ class ThreatStackModel:
             '/'.join([THREATSTACK_BASE_URL, url_type, url_type_id,]),
             url_args
         )
-        _logger.info(alerts_url)
 
         try:
             resp = requests.get(
