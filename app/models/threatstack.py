@@ -99,6 +99,12 @@ class ThreatStackModel:
 
         return available
 
+    def get_agent_by_id(self, agent_id):
+        '''
+        Get agent info for the given ID
+        '''
+        return self._make_threatstack_request('agent', agent_id,)
+
     def get_alert_by_id(self, alert_id):
         '''
         Retrieve an alert from Threat Stack by alert ID.
