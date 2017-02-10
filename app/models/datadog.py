@@ -33,7 +33,7 @@ class DataDogModel:
 
         return True
 
-    def put_alert_event(self, alert):
+    def put_alert_event(self, alert, hostname=None):
         '''
         Put alert data into DataDog.
         '''
@@ -41,7 +41,7 @@ class DataDogModel:
         event = {}
         event['title'] = alert.get('rule').get('original_rule').get('name')
         event['text'] = alert.get('title')
-        event['host'] = alert.get('latest_events')[0].get('hostname')
+        event['host'] = hostname
         event['source_type_name'] = 'threatstack'
         event['date_happened'] = int(alert.get('created_at') / 1000)
 
@@ -52,8 +52,6 @@ class DataDogModel:
         else:
             priority = 'low'
         event['priority'] = priority
-
-        _logger.info(event)
 
         response = datadog.api.Event.create(**event)
         return response

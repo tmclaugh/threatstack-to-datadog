@@ -43,9 +43,15 @@ def put_alert():
     for alert in webhook_data.get('alerts'):
         ts = threatstack_model.ThreatStackModel()
         alert_full = ts.get_alert_by_id(alert.get('id'))
+        if alert_full.get('agent_id'):
+            agent = ts.get_agent_by_id(alert_full.get('agent_id'))
+            hostname = agent.get('hostname')
+        else:
+            hostname = None
+
 
         dd = datadog_model.DataDogModel()
-        datadog_response = dd.put_alert_event(alert_full)
+        datadog_response = dd.put_alert_event(alert_full, hostname)
         datadog_response_list.append(datadog_response)
 
     status_code = 200
