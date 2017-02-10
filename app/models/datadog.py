@@ -39,7 +39,7 @@ class DataDogModel:
         '''
 
         event = {}
-        event['title'] = alert.get('rule').get('original_rule').get('name')
+        event['title'] = 'Threat Stack alert: {}'.format(alert.get('rule').get('original_rule').get('name'))
         event['text'] = alert.get('title')
         event['host'] = hostname
         event['source_type_name'] = 'threatstack'
