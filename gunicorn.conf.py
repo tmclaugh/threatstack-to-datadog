@@ -5,6 +5,7 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 bind = 'localhost:8080'
 loglevel = 'info'
+logconfig = 'logging.conf'
 timeout = 120
 graceful_timeout = 60
 worker_class = 'gevent'

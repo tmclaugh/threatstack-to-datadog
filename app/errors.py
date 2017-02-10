@@ -4,6 +4,8 @@ Application error handlers.
 from flask import Blueprint, jsonify
 import logging
 
+_logger = logging.getLogger(__name__)
+
 class AppBaseError(Exception):
     '''
     Base exception class for this service.
@@ -49,6 +51,5 @@ def log_exception(error):
     '''
     Log our exception.
     '''
-    _logger = logging.getLogger(__name__)
     _logger.exception(error)
 

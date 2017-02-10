@@ -1,8 +1,11 @@
 '''
 DataDog Model
 '''
-import config
 from app.errors import AppBaseError
+import config
+import logging
+
+_logger = logging.getLogger(__name__)
 
 DATADOG_API_KEY = config.DATADOG_API_KEY
 DATADOG_APP_KEY = config.DATADOG_APP_KEY
