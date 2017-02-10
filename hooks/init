@@ -1,0 +1,8 @@
+#!/bin/sh
+
+ln -s {{pkg.path}}/app {{pkg.svc_var_path}}
+ln -s {{pkg.path}}/gunicorn.conf.py {{pkg.svc_var_path}}
+ln -s {{pkg.path}}/config.py {{pkg.svc_var_path}}
+ln -s {{pkg.path}}/logging.conf {{pkg.svc_var_path}}
+ln -s {{pkg.path}}/threatstack-to-datadog.py {{pkg.svc_var_path}}
+
