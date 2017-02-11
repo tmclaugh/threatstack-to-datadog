@@ -32,10 +32,13 @@ do_unpack() {
 
 do_build() {
     pip install --upgrade pip
+    pip install virtualenv
 }
 
 do_install() {
     cd $pkg_prefix
+    virtualenv venv
+    source venv/bin/activate
     pip install -r requirements.txt
     pip freeze
 }

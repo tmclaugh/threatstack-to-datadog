@@ -1,6 +1,10 @@
-#!/bin/sh
+#!/bin/sh -xe
+
+# This makes debugging possible and let's us see app log!.
+exec 2>&1
 
 ln -s {{pkg.path}}/app {{pkg.svc_var_path}}
+ln -s {{pkg.path}}/venv {{pkg.svc_var_path}}
 ln -s {{pkg.path}}/gunicorn.conf.py {{pkg.svc_var_path}}
 ln -s {{pkg.path}}/config.py {{pkg.svc_var_path}}
 ln -s {{pkg.path}}/logging.conf {{pkg.svc_var_path}}
