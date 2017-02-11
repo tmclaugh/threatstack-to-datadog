@@ -4,7 +4,7 @@ Send alert events to datadog.
 
 from flask import Blueprint, jsonify, request
 import logging
-import app.models.datadog as datadog_model
+import app.models.datadoghq as datadog_model
 import app.models.threatstack as threatstack_model
 
 _logger = logging.getLogger(__name__)
