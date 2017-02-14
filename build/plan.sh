@@ -22,12 +22,15 @@ do_clean() {
 }
 
 do_unpack() {
+    # Because our habitat files liver under /build
+    PROJECT_ROOT="${PLAN_CONTEXT}/.."
+
     mkdir -p $pkg_prefix
-    build_line "Copying ./ to $pkg_prefix/"
-    cp -r $PLAN_CONTEXT/app $pkg_prefix/
-    cp -r $PLAN_CONTEXT/*.py $pkg_prefix/
-    cp -r $PLAN_CONTEXT/*.conf $pkg_prefix/
-    cp -r $PLAN_CONTEXT/requirements.txt $pkg_prefix/
+    build_line "Copying project data to $pkg_prefix/"
+    cp -r $PROJECT_ROOT/app $pkg_prefix/
+    cp -r $PROJECT_ROOT/*.py $pkg_prefix/
+    cp -r $PROJECT_ROOT/*.conf $pkg_prefix/
+    cp -r $PROJECT_ROOT/requirements.txt $pkg_prefix/
 }
 
 do_build() {
@@ -40,7 +43,6 @@ do_install() {
     virtualenv venv
     source venv/bin/activate
     pip install -r requirements.txt
-    pip freeze
 }
 
 
