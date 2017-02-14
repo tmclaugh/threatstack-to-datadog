@@ -43,8 +43,8 @@ This service uses [Chef Habitat](http://www.habitat.sh) to build deployable pack
 * mesos
 
 See the following resources for getting started with Habitat.
-* https:///www.habitat.sh/docs/overview/
-* https:///www.habitat.sh/tutorial/
+* https://www.habitat.sh/docs/overview/
+* https://www.habitat.sh/tutorial/
 
 Building packages:
 ```
