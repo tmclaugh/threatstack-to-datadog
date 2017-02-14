@@ -33,7 +33,7 @@ def is_available():
 
     return jsonify(success=success, datadog=datadog_info, threatstack=ts_info), status_code
 
-@datadog.route('/alert', methods=['POST'])
+@datadog.route('/event', methods=['POST'])
 def put_alert():
     '''
     Archive Threat Stack alerts to datadog.
