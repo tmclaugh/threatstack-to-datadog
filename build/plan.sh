@@ -1,7 +1,7 @@
 pkg_name=threatstack-to-datadog
 pkg_version=0.1.0
-pkg_deps=(core/python2)
-pkg_build_deps=(core/coreutils core/gcc core/python2 core/virtualenv python2/pip)
+pkg_deps=(core/coreutils core/python2)
+pkg_build_deps=(core/virtualenv)
 pkg_origin=tmclaugh
 pkg_maintainer='Tom McLaughlin'
 pkg_expose=(8080)
