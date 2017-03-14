@@ -6,6 +6,7 @@ from flask import Blueprint, jsonify, request
 import logging
 import app.models.datadoghq as datadog_model
 import app.models.threatstack as threatstack_model
+from app.sns import check_aws_sns
 
 _logger = logging.getLogger(__name__)
 
@@ -38,11 +39,13 @@ def is_available():
     return jsonify(success=success, datadog=datadog_info, threatstack=ts_info), status_code
 
 @datadog.route('/event', methods=['POST'])
+@check_aws_sns
 def put_alert():
     '''
     Archive Threat Stack alerts to datadog.
     '''
-    webhook_data = request.get_json()
+    # SNS does not set Content-Type to application/json
+    webhook_data = request.get_json(force=True)
     datadog_response_list = []
     for alert in webhook_data.get('alerts'):
         ts = threatstack_model.ThreatStackModel()
