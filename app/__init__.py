@@ -12,7 +12,10 @@ def _initialize_blueprints(application):
     Register Flask blueprints
     '''
     from app.views.datadog import datadog
-    application.register_blueprint(datadog, url_prefix='/api/v1/datadog')
+    application.register_blueprint(
+        datadog,
+        url_prefix='/threatstack-to-datadog/api/v1/datadog'
+    )
 
 def _initialize_errorhandlers(application):
     '''

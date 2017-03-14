@@ -68,7 +68,7 @@ $ hab studio enter
 ```
 
 ## API
-### POST https://_{host}_/api/v1/datadog/event
+### POST https://_{host}_/threatstack-to-datadog/api/v1/datadog/event
 Post a JSON doc from Threat Stack and record an event in DataDog.  JSON doc will be in the following format.  __NOTE__: A webhook may contain multiple alerts but this service will store each one individually.
 ```
 {
