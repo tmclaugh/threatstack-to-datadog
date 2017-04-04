@@ -301,7 +301,8 @@
       "DependsOn": [
         "LambdaIamRole",
         "LambdaIamPolicy",
-        "LambdaFunction"
+        "LambdaPermission",
+        "ProxyAnyMethod"
       ]
     }
   },
