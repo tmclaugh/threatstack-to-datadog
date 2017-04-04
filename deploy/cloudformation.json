@@ -1,0 +1,508 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Resources": {
+    "Deployment": {
+      "Type": "AWS::ApiGateway::Deployment",
+      "Properties": {
+        "RestApiId": {
+          "Fn::ImportValue": {
+            "Fn::Sub": "${SvcIntegrationsCFStack}-RestApiId"
+          }
+        },
+        "Description": {
+          "Fn::Join": [
+            " ",
+            [
+              {
+                "Ref": "DeploymentStage"
+              },
+              "stage"
+            ]
+          ]
+        },
+        "StageName": {
+          "Ref": "DeploymentStage"
+        }
+      },
+      "Metadata": {
+        "AWS::CloudFormation::Designer": {
+          "id": "701f3b5c-a6c2-49fa-b527-78be7ae4e50d"
+        }
+      },
+      "DependsOn": [
+        "ProxyAnyMethod"
+      ]
+    },
+    "RootResource": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Metadata": {
+        "AWS::CloudFormation::Designer": {
+          "id": "576f2766-0467-48b4-99be-b3bbfbb7e177"
+        }
+      },
+      "Properties": {
+        "RestApiId": {
+          "Fn::ImportValue": {
+            "Fn::Sub": "${SvcIntegrationsCFStack}-RestApiId"
+          }
+        },
+        "ParentId": {
+          "Fn::ImportValue": {
+            "Fn::Sub": "${SvcIntegrationsCFStack}-RootResourceId"
+          }
+        },
+        "PathPart": {
+          "Ref": "AppName"
+        }
+      }
+    },
+    "ProxyResource": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "RestApiId": {
+          "Fn::ImportValue": {
+            "Fn::Sub": "${SvcIntegrationsCFStack}-RestApiId"
+          }
+        },
+        "ParentId": {
+          "Ref": "RootResource"
+        },
+        "PathPart": "{proxy+}"
+      },
+      "Metadata": {
+        "AWS::CloudFormation::Designer": {
+          "id": "8d24687a-d967-4592-8119-129aa60439f7"
+        }
+      }
+    },
+    "ProxyAnyMethod": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "RestApiId": {
+          "Fn::ImportValue": {
+            "Fn::Sub": "${SvcIntegrationsCFStack}-RestApiId"
+          }
+        },
+        "ResourceId": {
+          "Ref": "ProxyResource"
+        },
+        "HttpMethod": "ANY",
+        "AuthorizationType": "NONE",
+        "Integration": {
+          "Type": "AWS_PROXY",
+          "IntegrationHttpMethod": "POST",
+          "Uri": {
+            "Fn::Sub": "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaFunction.Arn}/invocations"
+          },
+          "CacheKeyParameters": [
+            "method.request.path.proxy"
+          ],
+          "IntegrationResponses": [
+            {
+              "ResponseTemplates": {
+                "application/json": ""
+              },
+              "StatusCode": "200"
+            }
+          ]
+        },
+        "RequestParameters": {
+          "method.request.path.proxy": true
+        }
+      },
+      "Metadata": {
+        "AWS::CloudFormation::Designer": {
+          "id": "d84bf100-4b1d-4ce6-9d53-62e6ba2fbbbf"
+        }
+      },
+      "DependsOn": [
+        "LambdaFunction"
+      ]
+    },
+    "LambdaIamRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "RoleName": {
+          "Fn::Sub": "ThreatStackServiceLambda-${AppName}"
+        },
+        "Path": "/service-role/",
+        "ManagedPolicyArns": [
+          {
+            "Fn::ImportValue": {
+              "Fn::Sub": "${SvcIntegrationsCFStack}-SnsConfirmIamManagedPolicy"
+            }
+          }
+        ],
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        }
+      },
+      "Metadata": {
+        "AWS::CloudFormation::Designer": {
+          "id": "d2334711-6f09-4e7d-b6bd-1c1820e89ff4"
+        }
+      }
+    },
+    "LambdaIamPolicy": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyName": "LambdaExecutionPolicy",
+        "Roles": [
+          {
+            "Ref": "LambdaIamRole"
+          }
+        ],
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": "logs:CreateLogGroup",
+              "Resource": {
+                "Fn::Sub": "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*"
+              }
+            },
+            {
+              "Effect": "Allow",
+              "Action": [
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
+              ],
+              "Resource": [
+                {
+                  "Fn::Sub": "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/${AppName}:*"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "Metadata": {
+        "AWS::CloudFormation::Designer": {
+          "id": "683b3f20-3945-46dc-8e96-af3ad3a2bb13"
+        }
+      }
+    },
+    "LambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "straycat-dhs-org-straycat-lamba-deploys",
+          "S3Key": "threatstack-to-datadog.zip"
+        },
+        "Description": "Threat Stack to DataDog",
+        "Environment": {
+          "Variables": {
+            "THREATSTACK_API_KEY": {
+              "Ref": "ThreatStackApiKey"
+            },
+            "DATADOG_API_KEY": {
+              "Ref": "DataDogApiKey"
+            },
+            "DATADOG_APP_KEY": {
+              "Ref": "DataDogAppKey"
+            }
+          }
+        },
+        "FunctionName": {
+          "Ref": "AppName"
+        },
+        "Handler": {
+          "Ref": "LambdaHandler"
+        },
+        "MemorySize": {
+          "Ref": "LambdaMemorySize"
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "LambdaIamRole",
+            "Arn"
+          ]
+        },
+        "Runtime": "python2.7",
+        "Timeout": {
+          "Ref": "LambdaTimeout"
+        }
+      },
+      "Metadata": {
+        "AWS::CloudFormation::Designer": {
+          "id": "293804a3-70b0-40fa-8d83-299e6432a7bc"
+        }
+      }
+    },
+    "LambdaPermission": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "LambdaFunction"
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com"
+      },
+      "Metadata": {
+        "AWS::CloudFormation::Designer": {
+          "id": "32857435-a44d-4602-a6ca-5f18a0b547bd"
+        }
+      },
+      "Condition": ""
+    },
+    "SnsSubscription": {
+      "Type": "AWS::SNS::Subscription",
+      "Properties": {
+        "TopicArn": {
+          "Fn::ImportValue": {
+            "Fn::Sub": "${SvcIntegrationsCFStack}-SnsTopicArn"
+          }
+        },
+        "Protocol": "https",
+        "Endpoint": {
+          "Fn::Join": [
+            "",
+            [
+              "https://",
+              {
+                "Fn::ImportValue": {
+                  "Fn::Sub": "${SvcIntegrationsCFStack}-RestApiId"
+                }
+              },
+              ".execute-api.",
+              {
+                "Ref": "AWS::Region"
+              },
+              ".amazonaws.com/",
+              {
+                "Ref": "DeploymentStage"
+              },
+              "/",
+              {
+                "Ref": "AppName"
+              },
+              {
+                "Ref": "AppEndPoint"
+              }
+            ]
+          ]
+        }
+      },
+      "Metadata": {
+        "AWS::CloudFormation::Designer": {
+          "id": "f3f7f8e3-7f72-4952-bc99-3947cdb5a345"
+        }
+      },
+      "DependsOn": [
+        "Deployment",
+        "LambdaFunction"
+      ]
+    }
+  },
+  "Parameters": {
+    "AppName": {
+      "Type": "String",
+      "Description": "Name of API.",
+      "Default": "threatstack-to-datadog"
+    },
+    "AppEndPoint": {
+      "Type": "String",
+      "Description": "Path to Api endpoint",
+      "Default": "/api/v1/datadog/event"
+    },
+    "DataDogApiKey": {
+      "Type": "String",
+      "Description": "DataDog API key"
+    },
+    "DataDogAppKey": {
+      "Type": "String",
+      "Description": "DataDog App key"
+    },
+    "DeploymentStage": {
+      "Type": "String",
+      "Description": "Name of API deployment stage",
+      "Default": "prod"
+    },
+    "LambdaHandler": {
+      "Type": "String",
+      "Description": "",
+      "Default": "threatstack-to-datadog.application"
+    },
+    "LambdaMemorySize": {
+      "Type": "String",
+      "Description": "",
+      "Default": "128"
+    },
+    "LambdaTimeout": {
+      "Type": "String",
+      "Description": "",
+      "Default": "28"
+    },
+    "SvcIntegrationsCFStack": {
+      "Type": "String",
+      "Description": "Name of Threat Stack service integrations CF Stack. (Different from EC2/CloudTrail integration stack)",
+      "Default": "ThreatStackServiceIntegrations"
+    },
+    "ThreatStackApiKey": {
+      "Type": "String",
+      "Description": "Threat Stack API key"
+    }
+  },
+  "Metadata": {
+    "AWS::CloudFormation::Designer": {
+      "32857435-a44d-4602-a6ca-5f18a0b547bd": {
+        "size": {
+          "width": 60,
+          "height": 60
+        },
+        "position": {
+          "x": 210,
+          "y": 80
+        },
+        "z": 1,
+        "embeds": [],
+        "isassociatedwith": [
+          "293804a3-70b0-40fa-8d83-299e6432a7bc"
+        ]
+      },
+      "293804a3-70b0-40fa-8d83-299e6432a7bc": {
+        "size": {
+          "width": 60,
+          "height": 60
+        },
+        "position": {
+          "x": 50,
+          "y": 80
+        },
+        "z": 1,
+        "embeds": [],
+        "isrelatedto": [
+          "d2334711-6f09-4e7d-b6bd-1c1820e89ff4"
+        ]
+      },
+      "d2334711-6f09-4e7d-b6bd-1c1820e89ff4": {
+        "size": {
+          "width": 60,
+          "height": 60
+        },
+        "position": {
+          "x": 50,
+          "y": -40
+        },
+        "z": 1,
+        "embeds": []
+      },
+      "683b3f20-3945-46dc-8e96-af3ad3a2bb13": {
+        "size": {
+          "width": 60,
+          "height": 60
+        },
+        "position": {
+          "x": 200,
+          "y": -40
+        },
+        "z": 1,
+        "embeds": [],
+        "isassociatedwith": [
+          "d2334711-6f09-4e7d-b6bd-1c1820e89ff4"
+        ]
+      },
+      "576f2766-0467-48b4-99be-b3bbfbb7e177": {
+        "size": {
+          "width": 150,
+          "height": 150
+        },
+        "position": {
+          "x": -420,
+          "y": 40
+        },
+        "z": 1,
+        "embeds": [],
+        "isassociatedwith": [
+          "8e68389c-5a7b-4532-b4c8-78fa0be09e58"
+        ]
+      },
+      "8d24687a-d967-4592-8119-129aa60439f7": {
+        "size": {
+          "width": 150,
+          "height": 150
+        },
+        "position": {
+          "x": -170,
+          "y": 40
+        },
+        "z": 1,
+        "embeds": [],
+        "isassociatedwith": [
+          "576f2766-0467-48b4-99be-b3bbfbb7e177"
+        ]
+      },
+      "d84bf100-4b1d-4ce6-9d53-62e6ba2fbbbf": {
+        "size": {
+          "width": 60,
+          "height": 60
+        },
+        "position": {
+          "x": -130,
+          "y": 80
+        },
+        "z": 2,
+        "embeds": [],
+        "dependson": [
+          "293804a3-70b0-40fa-8d83-299e6432a7bc"
+        ]
+      },
+      "701f3b5c-a6c2-49fa-b527-78be7ae4e50d": {
+        "size": {
+          "width": 60,
+          "height": 60
+        },
+        "position": {
+          "x": -130,
+          "y": -80
+        },
+        "z": 1,
+        "embeds": [],
+        "isassociatedwith": [
+          "701f3b5c-a6c2-49fa-b527-78be7ae4e50d"
+        ],
+        "dependson": [
+          "d84bf100-4b1d-4ce6-9d53-62e6ba2fbbbf"
+        ],
+        "isrelatedto": [
+          "701f3b5c-a6c2-49fa-b527-78be7ae4e50d"
+        ]
+      },
+      "f3f7f8e3-7f72-4952-bc99-3947cdb5a345": {
+        "size": {
+          "width": 60,
+          "height": 60
+        },
+        "position": {
+          "x": -50,
+          "y": -140
+        },
+        "z": 0,
+        "embeds": [],
+        "dependson": [
+          "701f3b5c-a6c2-49fa-b527-78be7ae4e50d",
+          "293804a3-70b0-40fa-8d83-299e6432a7bc"
+        ]
+      },
+      "2e5d218e-0d70-48b6-8499-5405d7b3e3b7": {
+        "source": {
+          "id": "f3f7f8e3-7f72-4952-bc99-3947cdb5a345"
+        },
+        "target": {
+          "id": "701f3b5c-a6c2-49fa-b527-78be7ae4e50d"
+        },
+        "z": 3
+      }
+    }
+  }
+}
