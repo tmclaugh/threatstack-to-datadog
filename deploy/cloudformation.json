@@ -299,7 +299,8 @@
         }
       },
       "DependsOn": [
-        "Deployment",
+        "LambdaIamRole",
+        "LambdaIamPolicy",
         "LambdaFunction"
       ]
     }
@@ -403,8 +404,8 @@
           "height": 60
         },
         "position": {
-          "x": 200,
-          "y": -40
+          "x": 50,
+          "y": -140
         },
         "z": 1,
         "embeds": [],
@@ -484,14 +485,16 @@
           "height": 60
         },
         "position": {
-          "x": -50,
-          "y": -140
+          "x": 210,
+          "y": -40
         },
         "z": 0,
         "embeds": [],
         "dependson": [
           "701f3b5c-a6c2-49fa-b527-78be7ae4e50d",
-          "293804a3-70b0-40fa-8d83-299e6432a7bc"
+          "293804a3-70b0-40fa-8d83-299e6432a7bc",
+          "d2334711-6f09-4e7d-b6bd-1c1820e89ff4",
+          "683b3f20-3945-46dc-8e96-af3ad3a2bb13"
         ]
       },
       "2e5d218e-0d70-48b6-8499-5405d7b3e3b7": {
