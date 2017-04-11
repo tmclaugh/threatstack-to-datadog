@@ -6,7 +6,7 @@ Takes a Threat Stack web hook request and add an event to DataDog.
 ## Deployment
 This service can be deployed to AWS running on Lambda behind AWS API gateway by clicking "Launch Stack".
 [![Launch CloudFormation
-Stack](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=threatstack-to-datadog&templateURL=https://s3.amazonaws.com/straycat-dhs-org-straycat-lamba-deploys/threatstack-to-datadog.json)
+Stack](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=threatstack-to-datadog&templateURL=https://s3.amazonaws.com/ts-demo-lamba-deploys/threatstack-to-datadog.json)
 
 ## API
 ### POST https://_{host}_/threatstack-to-datadog/api/v1/datadog/event
