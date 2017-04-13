@@ -21,6 +21,8 @@ def is_available():
     '''
     Test that Threat Stack and datadog bucket are reachable.
     '''
+    _logger.info('{}: {}'.format(request.method, request.path))
+
     dd = datadog_model.DataDogModel()
     datadog_status = dd.is_available()
     datadog_info = {'success': datadog_status}
@@ -44,6 +46,10 @@ def put_alert():
     '''
     Archive Threat Stack alerts to datadog.
     '''
+    _logger.info('{}: {} - {}'.format(request.method,
+                                      request.path,
+                                      request.data))
+
     # SNS does not set Content-Type to application/json
     webhook_data = request.get_json(force=True)
     datadog_response_list = []
