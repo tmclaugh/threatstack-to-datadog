@@ -1,5 +1,6 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "Threat Stack to Datadog integration",
   "Resources": {
     "Deployment": {
       "Type": "AWS::ApiGateway::Deployment",
@@ -196,7 +197,7 @@
       "Type": "AWS::Lambda::Function",
       "Properties": {
         "Code": {
-          "S3Bucket": "straycat-dhs-org-straycat-lamba-deploys",
+          "S3Bucket": "ts-demo-lamba-deploys",
           "S3Key": "threatstack-to-datadog.zip"
         },
         "Description": "Threat Stack to DataDog",
@@ -332,17 +333,17 @@
     },
     "LambdaHandler": {
       "Type": "String",
-      "Description": "",
+      "Description": "Lambda handler function name",
       "Default": "threatstack-to-datadog.application"
     },
     "LambdaMemorySize": {
       "Type": "String",
-      "Description": "",
+      "Description": "Lambda memory size",
       "Default": "128"
     },
     "LambdaTimeout": {
       "Type": "String",
-      "Description": "",
+      "Description": "Lambda timeout",
       "Default": "28"
     },
     "SvcIntegrationsCFStack": {
