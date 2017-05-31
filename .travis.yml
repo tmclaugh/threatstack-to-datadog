@@ -18,7 +18,6 @@ deploy:
     secure: WtchxUe8/rDNppl+Kw2zsSgbpyH7NN2i1If0dvE2qaQsBcaLa4oEfLFFAP4tHp8yJ3xtBTOyvOpGiIbbjqXH1jzWFkwsL31Guxtd4Qo2z3b4rKPTX4ObMWpBTTkKn9Z1HNTgH37BWCpF6pujKMfN9ZQSXmKhNVC4Oo8/Dh0eZphoMaB7eOgNhysTD1pwrty4hOzIU75dT8P5iAPuhYI2KZyuYIEWHVT6f4RxOEYICRu8Jc8J0Ux/wAYL8KZvQNIGyTtLw6PX/s+nkZfs20ANUWUErIZ/tgRi3vEAQdTnr3qEPBD3kilx76QHwq8ev66RCUCCfoNw6HD2CoOHbOD1egLb2dJVmdOHwL/A6ml/Y/+a8x5GZ4Qx5zRZRuBaoeGBup4vr/p4uN+Lsd84/pyuSqwDKNpQGY9QaLWvU+XkduBQ0c/S81e7W7PSXxYhkzM/MN1kL2qZAp+YYMhshJevd83Um9IUveF1EEbMEFSfatqywfpfJo+8k/wVsuXiD3PX/lgDF8FyRvW42T2jYtqE/fiqL3bio37cMy8hQhb1wzRtckR67YDwwg2P4ciQXVrdePBJYQYi1erFpzN1dZxPospvqWsEmFzQJtHUtfZvvyi5GinKZ5UuEoNcY+Nj6GW2vTA9/akjDxnvR6R6xR4HmG81virCH7jcqSrFKL9j9Ks=
   bucket: ts-demo-lamba-deploys
   local-dir: dist
-  upload-dir: 'no'
   acl: public_read
   on:
     repo: threatstack/threatstack-to-datadog
