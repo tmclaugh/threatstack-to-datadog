@@ -1,4 +1,5 @@
-# threatstack-to-datadog
+# threatstack-to-datadog [![Build Status](https://travis-ci.org/threatstack/threatstack-to-datadog.svg?branch=master)](https://travis-ci.org/threatstack/threatstack-to-datadog)
+
 Takes a Threat Stack web hook request and add an event to DataDog.
 
 **NOTE: This code is provided as an example and without support for creating services that use Threat Stack webhooks to perform actions within an environment.**
