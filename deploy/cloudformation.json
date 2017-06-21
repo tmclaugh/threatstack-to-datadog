@@ -197,7 +197,7 @@
       "Type": "AWS::Lambda::Function",
       "Properties": {
         "Code": {
-          "S3Bucket": "ts-demo-lamba-deploys",
+          "S3Bucket": "ts-demo-lambda-deploys",
           "S3Key": "threatstack-to-datadog.zip"
         },
         "Description": "Threat Stack to DataDog",
