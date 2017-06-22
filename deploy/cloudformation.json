@@ -197,7 +197,7 @@
       "Type": "AWS::Lambda::Function",
       "Properties": {
         "Code": {
-          "S3Bucket": "straycat-dhs-org-straycat-lambda-deploys",
+          "S3Bucket": {"Ref": "AppS3Bucket"},
           "S3Key": "threatstack-to-datadog.zip"
         },
         "Description": "Threat Stack to DataDog",
@@ -268,7 +268,7 @@
           "Ref": "AppName"
         },
         "FunctionZipFileUrl": {
-          "Fn::Sub": "https://s3.amazonaws.com/straycat-dhs-org-straycat-lambda-deploys/${AppName}.zip"
+          "Fn::Sub": "https://s3.amazonaws.com/${AppS3Bucket}/${AppName}.zip"
         },
         "TravisBuildNumber": "%%TRAVIS_BUILD_NUMBER%%"
       }
@@ -334,6 +334,11 @@
       "Type": "String",
       "Description": "Path to Api endpoint",
       "Default": "/api/v1/datadog/event"
+    },
+    "AppS3Bucket": {
+      "Type": "String",
+      "Description": "S3 bucket of deployable code",
+      "Default": "ts-demo-lambda-deploys"
     },
     "DataDogApiKey": {
       "Type": "String",
