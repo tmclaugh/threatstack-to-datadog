@@ -9,6 +9,11 @@ after_success:
 - find ./ -name '*.pyc' -delete
 - zip -r dist/threatstack-to-datadog.zip . -x '.git/*' -x 'dist/*'
 - cp deploy/cloudformation.json dist/threatstack-to-datadog.json
+- sed -i.bak "s,%%SHA256%%,$(openssl dgst -binary -sha256 dist/threatstack-to-datadog.zip | openssl base64)," dist/threatstack-to-datadog.json
+- sed -i.bak "s,%%TRAVIS_BUILD_NUMBER%%,$TRAVIS_BUILD_NUMBER," dist/threatstack-to-datadog.json
+- rm dist/*.bak
+- ls -al dist
+- cat dist/threatstack-to-datadog.json
 deploy:
   skip_cleanup: true
   provider: s3
